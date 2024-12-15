@@ -1,0 +1,7 @@
+{
+  "test_cases": [
+    "HelloWorldTest",
+    "SimulatedTest1",
+    "SimulatedTest2"
+  ]
+}

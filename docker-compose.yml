@@ -1,0 +1,25 @@
+version: "3.9"
+services:
+  build:
+    build:
+      context: .
+    volumes:
+      - ./src:/app/src
+      - ./logs:/app/logs
+    command: bash scripts/build.sh
+
+  test:
+    build:
+      context: .
+    volumes:
+      - ./src:/app/src
+      - ./logs:/app/logs
+      - ./config:/app/config
+    command: bash scripts/test.sh
+
+  upload:
+    build:
+      context: .
+    volumes:
+      - ./logs:/app/logs
+    command: bash scripts/upload.sh
