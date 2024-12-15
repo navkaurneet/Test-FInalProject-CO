@@ -1,3 +1,4 @@
+
 # DevOps Project: Containerized CI Pipeline
 
 ## Overview
@@ -22,3 +23,5 @@ This project demonstrates a containerized CI pipeline using Docker and Docker Co
 
 ## Logs
 Logs for each stage are stored in the `logs/` directory.
+
+# CO-FinalProject-G5
