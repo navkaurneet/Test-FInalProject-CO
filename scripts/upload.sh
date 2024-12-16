@@ -3,7 +3,6 @@
 # Log the start of the upload process
 echo "Starting artifact upload..." | tee -a logs/upload.log
 
-# Ensure src directory and binary file have the correct permissions
 echo "Setting folder and file permissions..." | tee -a logs/upload.log
 chmod -R 755 /app/src   # Adjusted path to container's /app/src
 
@@ -11,7 +10,6 @@ chmod -R 755 /app/src   # Adjusted path to container's /app/src
 if [ -f "/app/src/binary" ]; then  # Use the correct path in the container
     echo "Binary found. Uploading to GitHub (simulated)..." | tee -a logs/upload.log
     
-    # Simulate the upload process (replace this with the actual upload logic when needed)
     sleep 2
     echo "Upload complete!" | tee -a logs/upload.log
 else
