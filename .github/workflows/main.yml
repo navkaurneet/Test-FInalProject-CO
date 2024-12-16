@@ -109,6 +109,12 @@ jobs:
     needs: upload
 
     steps:
+
+      - name: Install Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+          
       - name: Clean up orphan containers
         run: |
           docker-compose -f docker-compose.yml down --remove-orphans
