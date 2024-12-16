@@ -24,7 +24,7 @@ jobs:
           sudo curl -L "https://github.com/docker/compose/releases/download/v2.22.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
           sudo chmod +x /usr/local/bin/docker-compose
           docker-compose --version
-
+          
       - name: Cache Docker layers
         uses: actions/cache@v2
         with:
@@ -32,15 +32,15 @@ jobs:
           key: ${{ runner.os }}-docker-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-docker-
-
+            
       - name: Build Docker image for build stage
         run: |
           docker compose -f ./docker-compose.yml build build
-
+          
       - name: Run the build process (detached mode)
         run: |
           docker compose -f ./docker-compose.yml run -d --name build_container build
-
+          
       - name: Check if the build container is running
         run: |
           docker ps -a
@@ -51,12 +51,12 @@ jobs:
           docker exec build_container ls /app/src || echo "Failed to access build container"
           echo "Checking contents of artifacts folder"
           ls -l artifacts/
-
+          
       - name: Copy binary to artifacts
         run: |
           mkdir -p artifacts
           docker cp build_container:/app/src/binary ./artifacts/
-
+          
       - name: Save logs
         run: |
           mkdir -p logs
@@ -67,7 +67,7 @@ jobs:
         with:
           name: build-logs
           path: logs/
-
+          
       - name: Upload binaries as artifacts
         uses: actions/upload-artifact@v3
         with:
@@ -90,7 +90,7 @@ jobs:
           sudo curl -L "https://github.com/docker/compose/releases/download/v2.22.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
           sudo chmod +x /usr/local/bin/docker-compose
           docker-compose --version
-
+          
       - name: Cache Docker layers
         uses: actions/cache@v2
         with:
@@ -98,30 +98,30 @@ jobs:
           key: ${{ runner.os }}-docker-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-docker-
-
+            
       - name: Build Docker image for test stage
         run: |
           docker compose -f ./docker-compose.yml build test
-
+          
       - name: Run the test process (detached mode)
         run: |
           docker compose -f ./docker-compose.yml run -d --name test_container test
-
+          
       - name: Check if the test container is running
         run: |
           docker ps -a
           docker logs test_container || echo "No logs available for the container"
-
+          
       - name: Check contents in the container
         run: |
           docker exec test_container ls /app/src || echo "Directory /app/src not found"
           docker exec test_container ls /app/src/test-artifact || echo "test-artifact file not found in /app/src"
-
+          
       - name: Copy test artifacts
         run: |
           mkdir -p artifacts
           docker cp test_container:/app/src/test-artifact ./artifacts/ || echo "test-artifact not found"
-
+          
       - name: Save test logs
         run: |
           mkdir -p logs
@@ -132,7 +132,7 @@ jobs:
         with:
           name: test-logs
           path: logs/
-
+          
       - name: Upload test artifacts
         uses: actions/upload-artifact@v3
         with:
@@ -155,7 +155,7 @@ jobs:
           sudo curl -L "https://github.com/docker/compose/releases/download/v2.22.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
           sudo chmod +x /usr/local/bin/docker-compose
           docker-compose --version
-
+          
       - name: Cache Docker layers
         uses: actions/cache@v2
         with:
@@ -163,25 +163,25 @@ jobs:
           key: ${{ runner.os }}-docker-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-docker-
-
+            
       - name: Build Docker image for upload stage
         run: |
           docker compose -f ./docker-compose.yml build upload
-
+          
       - name: Run the upload process (detached mode)
         run: |
           docker compose -f ./docker-compose.yml run -d --name upload_container upload
-
+          
       - name: Check if the upload container is running
         run: |
           docker ps -a
           docker logs upload_container || echo "No logs available for the container"
-
+          
       - name: Copy binary to artifacts
         run: |
           mkdir -p artifacts
           docker cp upload_container:/app/src/binary ./artifacts/
-
+          
       - name: Upload binary artifacts
         uses: actions/upload-artifact@v3
         with:
@@ -201,19 +201,19 @@ jobs:
           sudo curl -L "https://github.com/docker/compose/releases/download/v2.22.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
           sudo chmod +x /usr/local/bin/docker-compose
           docker-compose --version
-
+          
       - name: Clean up orphan containers
         run: |
           docker compose -f ./docker-compose.yml down --remove-orphans
-
+          
       - name: Clean up unused Docker images
         run: |
           docker image prune -f
-
+          
       - name: Clean up unused volumes
         run: |
           docker volume prune -f
-
+          
       - name: Clean up unused networks
         run: |
           docker network prune -f
