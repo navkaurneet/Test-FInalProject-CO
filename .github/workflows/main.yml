@@ -44,7 +44,7 @@ jobs:
       - name: Copy binary to artifacts
         run: |
           mkdir -p artifacts
-          docker cp build_container:/src/binary artifacts/
+          docker cp build_container:/app/src/binary artifacts/
 
       - name: Save logs
         run: |
@@ -137,7 +137,7 @@ jobs:
       - name: Copy binary to artifacts
         run: |
           mkdir -p artifacts
-          docker cp upload_container:/src/binary artifacts/
+          docker cp upload_container:/app/src/binary artifacts/
 
       - name: Upload binary artifacts
         uses: actions/upload-artifact@v3
