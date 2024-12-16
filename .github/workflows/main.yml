@@ -164,7 +164,7 @@ jobs:
 
       - name: Clean up orphan containers
         run: |
-          docker compose -f ./docker-compose.yml down --remove-orphans
+          docker compose -f docker-compose.yml down --remove-orphans
 
       - name: Clean up unused Docker images
         run: |
