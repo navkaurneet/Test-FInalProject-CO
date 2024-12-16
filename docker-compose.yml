@@ -1,4 +1,3 @@
-version: "3.9"
 services:
   build:
     build:
@@ -6,6 +5,7 @@ services:
     volumes:
       - ./src:/app/src
       - ./logs:/app/logs
+      - ./scripts:/app/scripts
     command: bash scripts/build.sh
 
   test:
@@ -15,11 +15,14 @@ services:
       - ./src:/app/src
       - ./logs:/app/logs
       - ./config:/app/config
+      - ./scripts:/app/scripts
     command: bash scripts/test.sh
 
   upload:
     build:
       context: .
     volumes:
+      - ./src:/app/src        # Ensure src is properly mounted
       - ./logs:/app/logs
+      - ./scripts:/app/scripts
     command: bash scripts/upload.sh

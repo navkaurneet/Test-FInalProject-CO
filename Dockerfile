@@ -9,3 +9,9 @@ RUN apt-get update && apt-get install -y \
 
 # Create work directory
 WORKDIR /app
+
+# Copy scripts directory into the container
+COPY scripts/ /app/scripts/
+
+# Make sure the scripts are executable
+RUN chmod +x /app/scripts/*.sh
