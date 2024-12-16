@@ -39,17 +39,17 @@ jobs:
 
       - name: Run the build process
         run: |
-          docker compose -f docker-compose.yml run build
+          docker compose -f docker-compose.yml run --name build_container build
 
       - name: Copy binary to artifacts
         run: |
           mkdir -p artifacts
-          docker cp $(docker ps -aq -f name=build_container_name):/path/to/binary artifacts/
+          docker cp build_container:/path/to/binary artifacts/
 
       - name: Save logs
         run: |
           mkdir -p logs
-          docker logs $(docker ps -aq) > logs/build.log || echo "No logs to save"
+          docker logs build_container > logs/build.log || echo "No logs to save"
 
       - name: Upload logs as artifacts
         uses: actions/upload-artifact@v3
@@ -88,12 +88,12 @@ jobs:
 
       - name: Run the test process
         run: |
-          docker compose -f docker-compose.yml run test
+          docker compose -f docker-compose.yml run --name test_container test
 
       - name: Save logs
         run: |
           mkdir -p logs
-          docker logs $(docker ps -aq) > logs/test.log || echo "No logs to save"
+          docker logs test_container > logs/test.log || echo "No logs to save"
 
       - name: Upload logs as artifacts
         uses: actions/upload-artifact@v3
@@ -132,12 +132,12 @@ jobs:
 
       - name: Run the upload process
         run: |
-          docker compose -f docker-compose.yml run upload
+          docker compose -f docker-compose.yml run --name upload_container upload
 
       - name: Copy binary to artifacts
         run: |
           mkdir -p artifacts
-          docker cp $(docker ps -aq -f name=upload_container_name):/path/to/binary artifacts/
+          docker cp upload_container:/path/to/binary artifacts/
 
       - name: Upload binary artifacts
         uses: actions/upload-artifact@v3
