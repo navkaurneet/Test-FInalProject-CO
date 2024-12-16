@@ -112,12 +112,17 @@ jobs:
           docker ps -a
           docker logs test_container || echo "No logs available for the container"
 
+      - name: Check contents in the container
+        run: |
+          docker exec test_container ls /app/src || echo "Directory /app/src not found"
+          docker exec test_container ls /app/src/test-artifact || echo "test-artifact file not found in /app/src"
+
       - name: Copy test artifacts
         run: |
           mkdir -p artifacts
-          docker cp test_container:/app/src/test-artifact ./artifacts/
+          docker cp test_container:/app/src/test-artifact ./artifacts/ || echo "test-artifact not found"
 
-      - name: Save logs
+      - name: Save test logs
         run: |
           mkdir -p logs
           docker logs test_container > logs/test.log || echo "No logs to save"
@@ -127,6 +132,12 @@ jobs:
         with:
           name: test-logs
           path: logs/
+
+      - name: Upload test artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-artifacts
+          path: artifacts/
 
   upload:
     runs-on: ubuntu-latest
