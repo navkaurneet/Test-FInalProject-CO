@@ -35,11 +35,11 @@ jobs:
 
       - name: Build Docker image for build stage
         run: |
-          docker compose -f docker-compose.yml build build
+          docker compose -f ./docker-compose.yml build build
 
       - name: Run the build process
         run: |
-          docker compose -f docker-compose.yml run --name build_container build
+          docker compose -f ./docker-compose.yml run --name build_container build
 
       - name: Copy binary to artifacts
         run: |
@@ -56,6 +56,12 @@ jobs:
         with:
           name: build-logs
           path: logs/
+
+      - name: Upload binaries as artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-binaries
+          path: artifacts/
 
   test:
     runs-on: ubuntu-latest
@@ -84,11 +90,11 @@ jobs:
 
       - name: Build Docker image for test stage
         run: |
-          docker compose -f docker-compose.yml build test
+          docker compose -f ./docker-compose.yml build test
 
       - name: Run the test process
         run: |
-          docker compose -f docker-compose.yml run --name test_container test
+          docker compose -f ./docker-compose.yml run --name test_container test
 
       - name: Save logs
         run: |
@@ -128,11 +134,11 @@ jobs:
 
       - name: Build Docker image for upload stage
         run: |
-          docker compose -f docker-compose.yml build upload
+          docker compose -f ./docker-compose.yml build upload
 
       - name: Run the upload process
         run: |
-          docker compose -f docker-compose.yml run --name upload_container upload
+          docker compose -f ./docker-compose.yml run --name upload_container upload
 
       - name: Copy binary to artifacts
         run: |
@@ -158,7 +164,7 @@ jobs:
 
       - name: Clean up orphan containers
         run: |
-          docker compose -f docker-compose.yml down --remove-orphans
+          docker compose -f ./docker-compose.yml down --remove-orphans
 
       - name: Clean up unused Docker images
         run: |
