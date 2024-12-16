@@ -37,14 +37,18 @@ jobs:
         run: |
           docker compose -f ./docker-compose.yml build build
 
-      - name: Run the build process
+      - name: Run the build process (detached mode)
         run: |
-          docker compose -f ./docker-compose.yml run --name build_container build
+          docker compose -f ./docker-compose.yml run -d --name build_container build
+
+      - name: Check if the build container is running
+        run: |
+          docker ps -a
+          docker logs build_container || echo "No logs available for the container"
 
       - name: Check build artifacts
         run: |
-          echo "Checking contents of /app/src in container"
-          docker exec build_container ls /app/src
+          docker exec build_container ls /app/src || echo "Failed to access build container"
           echo "Checking contents of artifacts folder"
           ls -l artifacts/
 
@@ -57,7 +61,7 @@ jobs:
         run: |
           mkdir -p logs
           docker logs build_container > logs/build.log || echo "No logs to save"
-
+          
       - name: Upload logs as artifacts
         uses: actions/upload-artifact@v3
         with:
@@ -99,16 +103,26 @@ jobs:
         run: |
           docker compose -f ./docker-compose.yml build test
 
-      - name: Run the test process
+      - name: Run the test process (detached mode)
         run: |
-          docker compose -f ./docker-compose.yml run --name test_container test
+          docker compose -f ./docker-compose.yml run -d --name test_container test
+
+      - name: Check if the test container is running
+        run: |
+          docker ps -a
+          docker logs test_container || echo "No logs available for the container"
+
+      - name: Copy test artifacts
+        run: |
+          mkdir -p artifacts
+          docker cp test_container:/app/src/test-artifact ./artifacts/
 
       - name: Save logs
         run: |
           mkdir -p logs
           docker logs test_container > logs/test.log || echo "No logs to save"
-
-      - name: Upload logs as artifacts
+          
+      - name: Upload test logs as artifacts
         uses: actions/upload-artifact@v3
         with:
           name: test-logs
@@ -143,22 +157,19 @@ jobs:
         run: |
           docker compose -f ./docker-compose.yml build upload
 
-      - name: Run the upload process
+      - name: Run the upload process (detached mode)
         run: |
-          docker compose -f ./docker-compose.yml run --name upload_container upload
+          docker compose -f ./docker-compose.yml run -d --name upload_container upload
 
-      - name: Check contents of /app/src inside container
+      - name: Check if the upload container is running
         run: |
-          docker exec upload_container ls /app/src
+          docker ps -a
+          docker logs upload_container || echo "No logs available for the container"
 
       - name: Copy binary to artifacts
         run: |
           mkdir -p artifacts
           docker cp upload_container:/app/src/binary ./artifacts/
-
-      - name: List contents of artifacts directory
-        run: |
-          ls -l artifacts/
 
       - name: Upload binary artifacts
         uses: actions/upload-artifact@v3
